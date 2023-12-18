@@ -8,26 +8,29 @@
 
 #include <string>
 #include <vector>
-#include "CellGrid.h"
+
+struct Cell {
+    int x = 0;
+    int y = 0;
+};
 
 class GameState {
 private:
     const std::string universeName;
     const std::vector<int> birthRate;
     const std::vector<int> survivalRate;
-    CellGrid* cellGrid;
-    bool** cells[];
+    const int width;
+    const int height;
+    bool** cells;
 public:
     GameState(std::string universeName, std::vector<int> birthRate, std::vector<int> survivalRate,
-              CellGrid *cellGrid);
-
-    const std::string &getUniverseName() const;
-
-    const std::vector<int> &getBirthRate() const;
-
-    const std::vector<int> &getSurvivalRate() const;
-
-    CellGrid *getCellGrid() const;
+              int width, int height, bool **cells);
+    const std::string &GetUniverseName() const;
+    const std::vector<int> &GetBirthRate() const;
+    const std::vector<int> &GetSurvivalRate() const;
+    int GetWidth() const;
+    int GetHeight() const;
+    bool **GetCells() const;
 };
 
 

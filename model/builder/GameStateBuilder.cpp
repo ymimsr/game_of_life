@@ -5,6 +5,7 @@
 #include "GameStateBuilder.h"
 
 #include <utility>
+#include <iostream>
 
 #define DEFAULT_OFFSET_FOR_MAP_SIZE 5;
 #define DEFAULT_UNIVERSE_NAME "My Universe"
@@ -37,8 +38,7 @@ GameStateBuilder &GameStateBuilder::MaxY(int maxY) {
 GameStateBuilder &GameStateBuilder::AliveCell(int x, int y) {
     aliveCells.push_back(Cell {
             .x = x,
-            .y = y,
-            .alive = true
+            .y = y
     });
     return *this;
 }
@@ -51,29 +51,37 @@ GameState* GameStateBuilder::Build() {
     // ValidateSize() should be called after ValidateAndMoveCells because it depends on alive cellGrid
     ValidateSize();
 
-    CellGrid* cellGrid = BuildCellGrid();
+    bool** cells = BuildCells();
 
     auto* gameState = new GameState(
             universeName,
             birthRate,
             survivalRate,
-            cellGrid);
+            width,
+            height,
+            cells);
 
     return gameState;
 }
 
-CellGrid *GameStateBuilder::BuildCellGrid() {
-    auto* cellGrid = new CellGrid(width, height);
-    for (Cell aliveCell : aliveCells) {
-        if (cellGrid->GetCell(aliveCell.x, aliveCell.y).alive) {
+bool **GameStateBuilder::BuildCells() {
+    bool** cells = new bool*[height];
+    for (int y = 0; y < height; y++) {
+        cells[y] = new bool[width];
+        for (int x = 0; x < width; x++) {
+            cells[y][x] = false;
+        }
+    }
+
+    for (Cell cell : aliveCells) {
+        if (cells[cell.y][cell.x]) {
             printf("WARNING: Found duplicate cell, proceed to ignore it");
             continue;
         }
-
-        cellGrid->AliveCell(aliveCell.x, aliveCell.y);
+        cells[cell.y][cell.x] = true;
     }
 
-    return cellGrid;
+    return cells;
 }
 
 // 1. check if aliveCells are empty
@@ -163,8 +171,8 @@ void GameStateBuilder::ValidateSize() {
     // width + DEFAULT_OFFSET_FOR_MAP_SIZE
     // height + DEFAULT_OFFSET_FOR_MAP_SIZE
     if (!IsSizeSet()) {
-        printf("WARNING: Width and height were not explicitly set. "
-               "Generating width and height based on alive aliveCells");
+        std::cout << "WARNING: Width and height were not explicitly set. "
+               "Generating width and height based on alive cells" << std::endl;
 
         int maxCellX = 0, maxCellY = 0;
         for (Cell cell : aliveCells) {

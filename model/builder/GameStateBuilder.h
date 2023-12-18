@@ -6,7 +6,7 @@
 #define LAB_2_GAMESTATEBUILDER_H
 
 
-#include "GameState.h"
+#include "../GameState.h"
 
 class GameStateBuilder {
 private:
@@ -15,7 +15,7 @@ private:
     std::vector<int> survivalRate = std::vector<int>();
     int width = 0;
     int height = 0;
-    std::vector<Cell> aliveCells = std::vector<Cell>();
+    std::vector<Cell> aliveCells;
 public:
     GameStateBuilder &UniverseName(std::string universeName);
     GameStateBuilder &BirthRate(std::vector<int> birthRate);
@@ -32,7 +32,7 @@ private:
     void ValidateAndMoveCells();
     void MoveCellsExcludingNegativeCoordinates();
     bool IsSizeSet() const;
-    CellGrid *BuildCellGrid();
+    bool **BuildCells();
 };
 
 

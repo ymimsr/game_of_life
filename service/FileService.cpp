@@ -11,7 +11,7 @@
 
 GameState* FileService::ImportGameState(const std::string& inputFileName) {
     if (0 != inputFileName.compare(inputFileName.length() - 5, 5, ".life")) {
-        printf("ERROR: File name has incorrect format. Should end with .life");
+        std::cout << "ERROR: File name has incorrect format. Should end with .life" << std::endl;
         throw std::exception("Incorrect format for input file");
     }
 
@@ -136,22 +136,25 @@ void FileService::ReadAliveCells(std::ifstream &file, GameStateBuilder &gameStat
     }
 }
 
-void FileService::ExportGameState(GameState *gameState) {
-    std::string outputFileName = gameState->getUniverseName() + ".life";
+void FileService::ExportGameState(GameState *gameState, const std::string& outputFileName) {
     std::ofstream outputFile;
     outputFile.open(outputFileName);
 
     outputFile << GAME_VERSION_LINE << "\n";
-    outputFile << "#N " << gameState->getUniverseName() << "\n";
+    outputFile << "#N " << gameState->GetUniverseName() << "\n";
     outputFile << "#R B"
-        << IntVectorToString(gameState->getBirthRate()) << "/S"
-        << IntVectorToString(gameState->getSurvivalRate()) << "\n";
+               << IntVectorToString(gameState->GetBirthRate()) << "/S"
+               << IntVectorToString(gameState->GetSurvivalRate()) << "\n";
     outputFile << "#S X"
-        << gameState->getCellGrid()->getWidth() << "/Y"
-        << gameState->getCellGrid()->getHeight();
+               << gameState->GetWidth() << "/Y"
+        << gameState->GetHeight();
 
-    for (Cell* cell : gameState->getCellGrid()->GetAliveCells()) {
-        outputFile << "\n" << cell->x << " " << cell->y;
+    for (int y = 0; y < gameState->GetHeight(); y++) {
+        for (int x = 0; x < gameState->GetWidth(); x++) {
+            if (gameState->GetCells()[y][x]) {
+                outputFile << "\n" << x << " " << y;
+            }
+        }
     }
 
     outputFile.close();

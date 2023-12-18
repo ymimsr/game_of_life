@@ -3,9 +3,7 @@
 //
 #include <string>
 #include <regex>
-#include <map>
-#include "gamestate/GameState.h"
-#include "gamestate/GameStateBuilder.h"
+#include "../model/builder/GameStateBuilder.h"
 
 #ifndef LAB_2_FILESERVICE_H
 #define LAB_2_FILESERVICE_H
@@ -19,7 +17,7 @@ private:
     static void ReadAliveCells(std::ifstream& file, GameStateBuilder& gameStateBuilder);
 public:
     static GameState* ImportGameState(const std::string& inputFileName);
-    static void ExportGameState(GameState* gameState);
+    static void ExportGameState(GameState* gameState, const std::string& outputFileName);
 };
 
 
